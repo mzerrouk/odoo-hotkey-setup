@@ -1,12 +1,15 @@
 # ========================================
 # Odoo Server Configuration
 # ========================================
+# SINGLE SOURCE OF TRUTH for all configuration
 # Edit these paths to match your computer setup
-# This file is used by all PowerShell scripts
+# This file is used by:
+#   - All PowerShell scripts (start_odoo.ps1, restart_odoo.ps1, etc.)
+#   - AutoHotkey script (odoo_hotkeys.ahk via get_config.ps1)
 
 # ---- PATHS (EDIT THESE!) ----
-$PYTHON_PATH = "C:\Users\Hacene\Odoo\python\python.exe"
-$ODOO_SERVER_PATH = "C:\Users\Hacene\Odoo\server"
+$PYTHON_PATH = "C:\Users\Hacene\odoo18\python\python.exe"
+$ODOO_SERVER_PATH = "C:\Users\Hacene\odoo18\server"
 $ODOO_BIN = "$ODOO_SERVER_PATH\odoo-bin"
 $ODOO_CONF = "$ODOO_SERVER_PATH\odoo.conf"
 $ODOO_LOG = "$ODOO_SERVER_PATH\odoo.log"
@@ -56,8 +59,10 @@ function Test-OdooConfiguration {
     return $true
 }
 
-# Display configuration when loaded
-Write-Host "Odoo Configuration Loaded:" -ForegroundColor Cyan
-Write-Host "  Python: $PYTHON_PATH" -ForegroundColor Gray
-Write-Host "  Server: $ODOO_SERVER_PATH" -ForegroundColor Gray
-Write-Host "  Module: $MODULE_TO_UPDATE" -ForegroundColor Gray
+# Display configuration when loaded directly (not when sourced by other scripts)
+if ($MyInvocation.InvocationName -ne '.') {
+    Write-Host "Odoo Configuration Loaded:" -ForegroundColor Cyan
+    Write-Host "  Python: $PYTHON_PATH" -ForegroundColor Gray
+    Write-Host "  Server: $ODOO_SERVER_PATH" -ForegroundColor Gray
+    Write-Host "  Module: $MODULE_TO_UPDATE" -ForegroundColor Gray
+}

@@ -8,16 +8,35 @@
 #SingleInstance Force
 
 ; ========================================
-; CONFIGURATION - EDIT THIS SECTION!
+; CONFIGURATION - LOADED FROM config.ps1
 ; ========================================
-; Update this path to match your Odoo server location
-ODOO_SERVER_PATH := "C:\Users\Hacene\Odoo\server\odoo-setup"
+; All configuration is centralized in config.ps1
+; This script dynamically reads from it at startup
+
+; Helper function to get config values from PowerShell
+GetConfig(key) {
+    scriptDir := A_ScriptDir
+    cmd := 'powershell.exe -ExecutionPolicy Bypass -File "' . scriptDir . '\get_config.ps1" -Key "' . key . '"'
+    result := RunWaitOne(cmd)
+    return Trim(result)
+}
+
+; Helper function to run PowerShell and capture output
+RunWaitOne(command) {
+    shell := ComObject("WScript.Shell")
+    exec := shell.Exec(command)
+    return exec.StdOut.ReadAll()
+}
+
+; Load configuration from config.ps1
+SCRIPT_DIR := GetConfig("SCRIPT_DIR")
+ODOO_SERVER_PATH := GetConfig("ODOO_SERVER_PATH")
+LOG_FILE := GetConfig("ODOO_LOG")
 
 ; Script paths (these use the path above)
-RESTART_SCRIPT := ODOO_SERVER_PATH . "\restart_odoo.ps1"
-START_SCRIPT := ODOO_SERVER_PATH . "\start_odoo.ps1"
-STOP_SCRIPT := ODOO_SERVER_PATH . "\stop_odoo.ps1"
-LOG_FILE := "C:\Users\Hacene\Odoo\server\odoo.log"
+RESTART_SCRIPT := SCRIPT_DIR . "\restart_odoo.ps1"
+START_SCRIPT := SCRIPT_DIR . "\start_odoo.ps1"
+STOP_SCRIPT := SCRIPT_DIR . "\stop_odoo.ps1"
 
 ; ========================================
 ; HOTKEYS

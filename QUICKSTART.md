@@ -28,14 +28,17 @@
    - AutoHotkey v2
    - Odoo (clone your repository)
 
-3. **Edit `config.ps1`:**
+3. **Edit `config.ps1` (ONLY file you need to edit!):**
    - Open in Notepad or VS Code
-   - Update these two lines:
+   - Update the paths to match your system:
      ```powershell
-     $PYTHON_PATH = "C:\Users\YourName\Odoo\python\python.exe"
-     $ODOO_SERVER_PATH = "C:\Users\YourName\Odoo\server"
+     $PYTHON_PATH = "C:\Users\YourName\odoo18\python\python.exe"
+     $ODOO_SERVER_PATH = "C:\Users\YourName\odoo18\server"
+     $MODULE_TO_UPDATE = "your_module_name"
      ```
    - Save the file
+   
+   > **Note**: The AutoHotkey script automatically reads from `config.ps1`. No need to edit it!
 
 4. **Test configuration:**
    ```powershell
@@ -76,9 +79,10 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 
 ## Files Overview
 
-- **config.ps1** - Edit this first! Contains all paths
+- **config.ps1** - **SINGLE SOURCE OF TRUTH** - Edit this first! Contains all paths
+- **get_config.ps1** - Helper script (auto-used by AutoHotkey, don't edit)
 - **test_config.ps1** - Run this to verify setup
-- **odoo_hotkeys.ahk** - Run this to enable hotkeys
+- **odoo_hotkeys.ahk** - Run this to enable hotkeys (reads from config.ps1)
 - **start_odoo.ps1** - Start Odoo manually
 - **stop_odoo.ps1** - Stop Odoo manually
 - **restart_odoo.ps1** - Restart with module update

@@ -4,13 +4,15 @@ This package contains all the scripts and configurations needed to manage your O
 
 ## 📦 What's Included
 
-- **config.ps1** - Central configuration file (paths to Python, Odoo, etc.)
-- **odoo_hotkeys.ahk** - AutoHotkey script for global hotkeys
+- **config.ps1** - **SINGLE SOURCE OF TRUTH** - Central configuration file (paths to Python, Odoo, etc.)
+- **get_config.ps1** - Helper script to export config values (used by AutoHotkey)
+- **odoo_hotkeys.ahk** - AutoHotkey script for global hotkeys (reads from config.ps1)
 - **PowerShell Scripts:**
   - `start_odoo.ps1` - Start Odoo server
   - `stop_odoo.ps1` - Stop Odoo server
   - `restart_odoo.ps1` - Restart with module update
   - `restart_odoo_quick.ps1` - Quick restart without update
+  - `test_config.ps1` - Test and verify configuration
 
 ## 🚀 Quick Setup on New Computer
 
@@ -28,19 +30,21 @@ This package contains all the scripts and configurations needed to manage your O
    - Clone or copy your Odoo server files
    - Note the server path (e.g., `C:\Users\YourName\Odoo\server`)
 
-### Step 2: Configure Paths
+### Step 2: Configure Paths (ONLY File to Edit!)
 
 1. Open `config.ps1` in a text editor
 2. Update the following paths to match your new computer:
    ```powershell
-   $PYTHON_PATH = "C:\Users\YourName\Odoo\python\python.exe"
-   $ODOO_SERVER_PATH = "C:\Users\YourName\Odoo\server"
+   $PYTHON_PATH = "C:\Users\YourName\odoo18\python\python.exe"
+   $ODOO_SERVER_PATH = "C:\Users\YourName\odoo18\server"
    ```
 3. Update the module name if needed:
    ```powershell
    $MODULE_TO_UPDATE = "purchase_api"
    ```
 4. Save the file
+
+> **Important**: You only need to edit `config.ps1`. The AutoHotkey script automatically reads from it!
 
 ### Step 3: Copy Files
 
@@ -102,8 +106,9 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### AutoHotkey Not Working
 
 1. Make sure AutoHotkey v2 is installed (not v1)
-2. Check that paths in `odoo_hotkeys.ahk` are correct
-3. Run the script as Administrator if needed
+2. Check that paths in `config.ps1` are correct
+3. Restart the AutoHotkey script after changing config
+4. Run the script as Administrator if needed
 
 ### Odoo Won't Start
 
@@ -114,10 +119,13 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ## 📂 File Structure
 
 ```
-odoo-setup/
+odoo-hotkey-setup/
 ├── README.md                    # This file
+├── QUICKSTART.md                # Quick reference guide
 ├── config.ps1                   # Configuration (EDIT THIS FIRST!)
-├── odoo_hotkeys.ahk            # AutoHotkey script
+├── get_config.ps1               # Helper script (auto-used by AutoHotkey)
+├── test_config.ps1              # Test configuration
+├── odoo_hotkeys.ahk            # AutoHotkey script (reads from config.ps1)
 ├── start_odoo.ps1              # Start script
 ├── stop_odoo.ps1               # Stop script
 ├── restart_odoo.ps1            # Restart with update
