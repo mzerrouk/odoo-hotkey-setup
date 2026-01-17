@@ -1,18 +1,36 @@
-# Odoo Server Setup Package
+## 💡 Why This Project Exists
 
-This package contains all the scripts and configurations needed to manage your Odoo server with global hotkeys.
+As a web developer, I was used to fast-paced development workflows. When I switched to Odoo, I felt significantly less productive. Every single update required me to manually:
+1. Stop the server
+2. Update apps
+3. Upgrade modules
+4. Restart the server
+
+This repetitive process was a **pain** and killed my development flow. So I built this tool to speed up Odoo development and restore my productivity.
+
+**Good news:** Odoo already has auto-refresh built-in! With `--dev=all` mode (which this tool uses), Odoo automatically reloads when you change Python files. Combined with these hotkeys, you get a lightning-fast development experience.
+
+**Enjoy the speed! ⚡**
+
+---
+
+# Odoo Server Hotkey Setup
+
+Global hotkey system for managing Odoo server with keyboard shortcuts from anywhere in Windows.
+
+> **✅ Tested on:** Odoo 18 Enterprise | Windows 11  
+> **⚠️ Note:** Other Odoo versions and Windows versions have not been tested yet.
 
 ## 📦 What's Included
 
-- **config.ps1** - **SINGLE SOURCE OF TRUTH** - Central configuration file (paths to Python, Odoo, etc.)
-- **get_config.ps1** - Helper script to export config values (used by AutoHotkey)
-- **odoo_hotkeys.ahk** - AutoHotkey script for global hotkeys (reads from config.ps1)
+- **`.env`** - **SINGLE SOURCE OF TRUTH** - Central configuration file (paths to Python, Odoo, etc.)
+- **`load_env.ps1`** - Helper script to load environment variables from `.env`
+- **`odoo_hotkeys.ahk`** - AutoHotkey script for global hotkeys (reads from `.env`)
 - **PowerShell Scripts:**
   - `start_odoo.ps1` - Start Odoo server
   - `stop_odoo.ps1` - Stop Odoo server
   - `restart_odoo.ps1` - Restart with module update
   - `restart_odoo_quick.ps1` - Quick restart without update
-  - `test_config.ps1` - Test and verify configuration
 
 ## 🚀 Quick Setup on New Computer
 
@@ -20,40 +38,41 @@ This package contains all the scripts and configurations needed to manage your O
 
 1. **Install Python** (if not already installed)
    - Download from [python.org](https://www.python.org/downloads/)
-   - Note the installation path (e.g., `C:\Users\YourName\Odoo\python\python.exe`)
+   - Note the installation path (e.g., `C:\Users\YourName\odoo18\python\python.exe`)
 
 2. **Install AutoHotkey v2**
    - Download from [autohotkey.com](https://www.autohotkey.com/)
-   - Install version 2.0 or later
+   - **Required:** Version 2.0 or later (v1 will NOT work)
 
 3. **Install Odoo**
    - Clone or copy your Odoo server files
-   - Note the server path (e.g., `C:\Users\YourName\Odoo\server`)
+   - Note the server path (e.g., `C:\Users\YourName\odoo18\server`)
 
 ### Step 2: Configure Paths (ONLY File to Edit!)
 
-1. Open `config.ps1` in a text editor
-2. Update the following paths to match your new computer:
+1. Copy `.env.example` to `.env`:
    ```powershell
-   $PYTHON_PATH = "C:\Users\YourName\odoo18\python\python.exe"
-   $ODOO_SERVER_PATH = "C:\Users\YourName\odoo18\server"
+   Copy-Item .env.example .env
    ```
-3. Update the module name if needed:
-   ```powershell
-   $MODULE_TO_UPDATE = "purchase_api"
+
+2. Open `.env` in a text editor
+
+3. Update the paths to match your computer:
+   ```ini
+   PYTHON_PATH=C:\Users\YourName\odoo18\python\python.exe
+   ODOO_SERVER_PATH=C:\Users\YourName\odoo18\server
+   ODOO_BIN=C:\Users\YourName\odoo18\server\odoo-bin
+   ODOO_CONF=C:\Users\YourName\odoo18\server\odoo.conf
+   ODOO_LOG=C:\Users\YourName\odoo18\server\odoo.log
+   MODULE_TO_UPDATE=your_module_name
+   DEV_MODE=--dev=all
    ```
+
 4. Save the file
 
-> **Important**: You only need to edit `config.ps1`. The AutoHotkey script automatically reads from it!
+> **Important**: You only need to edit `.env`. All scripts automatically read from it!
 
-### Step 3: Copy Files
-
-Copy all files from the `odoo-setup` folder to your Odoo server directory:
-```
-C:\Users\YourName\Odoo\server\
-```
-
-### Step 4: Setup AutoHotkey
+### Step 3: Setup AutoHotkey
 
 1. Right-click on `odoo_hotkeys.ahk`
 2. Select "Run Script"
@@ -62,7 +81,7 @@ C:\Users\YourName\Odoo\server\
    - Type `shell:startup` and press Enter
    - Create a shortcut to `odoo_hotkeys.ahk` in this folder
 
-### Step 5: Test
+### Step 4: Test
 
 Press `Ctrl + Alt + S` to start Odoo server, or use any of the hotkeys below.
 
@@ -94,7 +113,31 @@ You can also run the scripts manually from PowerShell:
 .\restart_odoo_quick.ps1
 ```
 
-## 🔧 Troubleshooting
+## 🔧 Configuration Management
+
+### Single Source of Truth: `.env` File
+
+All configuration is centralized in the `.env` file. This makes it easy to:
+- ✅ Update paths in one place
+- ✅ Share setup with others (via `.env.example`)
+- ✅ Keep local configuration private (`.env` is gitignored)
+- ✅ Move to new computers easily
+
+### Changing Configuration
+
+Simply edit the `.env` file and all scripts will automatically use the new values on next run:
+
+```ini
+# Example: Change Python path
+PYTHON_PATH=C:\NewPath\python.exe
+
+# Example: Change module to update
+MODULE_TO_UPDATE=my_custom_module
+```
+
+No need to edit any script files!
+
+## 🐛 Troubleshooting
 
 ### PowerShell Execution Policy Error
 
@@ -106,15 +149,23 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 ### AutoHotkey Not Working
 
 1. Make sure AutoHotkey v2 is installed (not v1)
-2. Check that paths in `config.ps1` are correct
-3. Restart the AutoHotkey script after changing config
+2. Check that paths in `.env` are correct
+3. Restart the AutoHotkey script after changing `.env`
 4. Run the script as Administrator if needed
 
 ### Odoo Won't Start
 
-1. Check that all paths in `config.ps1` are correct
+1. Check that all paths in `.env` are correct
 2. Verify Python and Odoo are properly installed
-3. Check `odoo.log` for error messages
+3. Check the log file (press `Ctrl + Alt + L`)
+4. Run `.\start_odoo.ps1` manually to see error messages
+
+### .env File Not Found Error
+
+If you get ".env file not found" error:
+1. Make sure `.env` exists in the `odoo-hotkey-setup` folder
+2. Copy `.env.example` to `.env` if it doesn't exist
+3. Update the paths in `.env` to match your system
 
 ## 📂 File Structure
 
@@ -122,10 +173,10 @@ Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
 odoo-hotkey-setup/
 ├── README.md                    # This file
 ├── QUICKSTART.md                # Quick reference guide
-├── config.ps1                   # Configuration (EDIT THIS FIRST!)
-├── get_config.ps1               # Helper script (auto-used by AutoHotkey)
-├── test_config.ps1              # Test configuration
-├── odoo_hotkeys.ahk            # AutoHotkey script (reads from config.ps1)
+├── .env                         # Configuration (EDIT THIS FIRST!) - gitignored
+├── .env.example                 # Configuration template
+├── load_env.ps1                 # Helper script (loads .env)
+├── odoo_hotkeys.ahk            # AutoHotkey script (reads .env)
 ├── start_odoo.ps1              # Start script
 ├── stop_odoo.ps1               # Stop script
 ├── restart_odoo.ps1            # Restart with update
@@ -134,16 +185,34 @@ odoo-hotkey-setup/
 
 ## 🎯 Tips
 
-- **First time setup**: Always edit `config.ps1` first!
-- **Module updates**: Use `Ctrl + Alt + R` when you change code
-- **Quick restarts**: Modify `restart_odoo_quick.ps1` to use it with the hotkey
+- **First time setup**: Copy `.env.example` to `.env` and edit it first!
+- **Auto-refresh is already enabled!**: With `DEV_MODE=--dev=all` in your `.env`, Odoo automatically reloads when you change Python files. No need to restart for code changes!
+- **Module updates**: Use `Ctrl + Alt + R` when you add new files, change XML/data files, or update module dependencies
 - **Logs**: Press `Ctrl + Alt + L` to quickly check logs
 - **Startup**: Add AutoHotkey script to Windows Startup for convenience
+- **Git**: `.env` is gitignored, so your local paths stay private
+
+## 🧪 Testing Information
+
+**Tested Configuration:**
+- **Odoo Version:** 18 Enterprise
+- **Operating System:** Windows 11
+- **AutoHotkey Version:** v2.0+
+- **PowerShell Version:** 5.1+
+
+**Not Yet Tested:**
+- Other Odoo versions (Community, older versions)
+- Other Windows versions (Windows 10, Server editions)
+- Other operating systems (Linux, macOS)
+
+If you test this setup on other configurations, please share your results!
 
 ## 📞 Support
 
 If you encounter issues:
-1. Check that all paths in `config.ps1` are correct
-2. Verify prerequisites are installed
-3. Check the log file for errors
-4. Make sure you're running PowerShell scripts from the Odoo server directory
+1. Check that all paths in `.env` are correct
+2. Verify prerequisites are installed (Python, AutoHotkey v2, Odoo)
+3. Check the log file for errors (`Ctrl + Alt + L`)
+4. Make sure you're running PowerShell scripts from the correct directory
+5. Verify you're using AutoHotkey v2 (not v1)
+

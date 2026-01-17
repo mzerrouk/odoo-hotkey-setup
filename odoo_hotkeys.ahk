@@ -38,10 +38,8 @@ LoadEnvFile() {
             key := Trim(match[1])
             value := Trim(match[2])
             
-            ; Remove quotes if present (double quotes)
-            value := RegExReplace(value, '^"|"$', '')
-            ; Remove single quotes if present
-            value := RegExReplace(value, "^'|'$", '')
+            ; Remove quotes if present (both double and single quotes)
+            value := RegExReplace(value, '^["`'']|["`'']$', '')
             
             config[key] := value
         }
