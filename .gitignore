@@ -18,3 +18,7 @@ filestore/
 .idea/
 *.swp
 *.swo
+
+# Environment configuration (local paths)
+.env
+

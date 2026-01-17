@@ -2,8 +2,9 @@
 # Fast restart without updating modules
 # Use this when you just need to restart without module updates
 
-# Load configuration
-. "$PSScriptRoot\config.ps1"
+# Load configuration from .env file
+. "$PSScriptRoot\load_env.ps1"
+
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "  QUICK RESTART (NO UPDATE)" -ForegroundColor Cyan

@@ -2,8 +2,9 @@
 # Standalone script to restart Odoo and update modules
 # Can be called from AutoHotkey or manually
 
-# Load configuration
-. "$PSScriptRoot\config.ps1"
+# Load configuration from .env file
+. "$PSScriptRoot\load_env.ps1"
+
 
 Write-Host "========================================" -ForegroundColor Magenta
 Write-Host "  RESTARTING ODOO WITH AUTO-UPDATE" -ForegroundColor Magenta

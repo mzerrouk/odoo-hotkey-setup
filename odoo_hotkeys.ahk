@@ -8,32 +8,57 @@
 #SingleInstance Force
 
 ; ========================================
-; CONFIGURATION - LOADED FROM config.ps1
+; CONFIGURATION FROM .ENV FILE
 ; ========================================
-; All configuration is centralized in config.ps1
-; This script dynamically reads from it at startup
+; All paths are loaded from .env file in the same directory
+; Edit .env file to change configuration
 
-; Helper function to get config values from PowerShell
-GetConfig(key) {
-    scriptDir := A_ScriptDir
-    cmd := 'powershell.exe -ExecutionPolicy Bypass -File "' . scriptDir . '\get_config.ps1" -Key "' . key . '"'
-    result := RunWaitOne(cmd)
-    return Trim(result)
+; Helper function to read .env file
+LoadEnvFile() {
+    envFile := A_ScriptDir . "\.env"
+    
+    if !FileExist(envFile) {
+        MsgBox "ERROR: .env file not found at:`n" . envFile . "`n`nPlease create a .env file based on .env.example"
+        ExitApp
+    }
+    
+    config := Map()
+    
+    ; Read .env file line by line
+    Loop Read, envFile
+    {
+        line := Trim(A_LoopReadLine)
+        
+        ; Skip empty lines and comments
+        if (line = "" || SubStr(line, 1, 1) = "#")
+            continue
+        
+        ; Parse KEY=VALUE format
+        if RegExMatch(line, "^([^=]+)=(.*)$", &match) {
+            key := Trim(match[1])
+            value := Trim(match[2])
+            
+            ; Remove quotes if present (double quotes)
+            value := RegExReplace(value, '^"|"$', '')
+            ; Remove single quotes if present
+            value := RegExReplace(value, "^'|'$", '')
+            
+            config[key] := value
+        }
+    }
+    
+    return config
 }
 
-; Helper function to run PowerShell and capture output
-RunWaitOne(command) {
-    shell := ComObject("WScript.Shell")
-    exec := shell.Exec(command)
-    return exec.StdOut.ReadAll()
-}
+; Load configuration
+config := LoadEnvFile()
 
-; Load configuration from config.ps1
-SCRIPT_DIR := GetConfig("SCRIPT_DIR")
-ODOO_SERVER_PATH := GetConfig("ODOO_SERVER_PATH")
-LOG_FILE := GetConfig("ODOO_LOG")
+; Extract needed values
+SCRIPT_DIR := A_ScriptDir
+ODOO_SERVER_PATH := config["ODOO_SERVER_PATH"]
+LOG_FILE := config["ODOO_LOG"]
 
-; Script paths (these use the path above)
+; Script paths
 RESTART_SCRIPT := SCRIPT_DIR . "\restart_odoo.ps1"
 START_SCRIPT := SCRIPT_DIR . "\start_odoo.ps1"
 STOP_SCRIPT := SCRIPT_DIR . "\stop_odoo.ps1"

@@ -1,14 +1,26 @@
 # ---- Start Odoo Server ----
 # Script to start Odoo server with development mode
 
-# Load configuration
-. "$PSScriptRoot\config.ps1"
+# Load configuration from .env file
+. "$PSScriptRoot\load_env.ps1"
 
 # Verify configuration
 Write-Host "Checking Odoo installation..." -ForegroundColor Cyan
 
-if (-Not (Test-OdooConfiguration)) {
-    Write-Host "`nPlease update config.ps1 with correct paths!" -ForegroundColor Yellow
+if (-Not (Test-Path $PYTHON_PATH)) {
+    Write-Host "Python not found at: $PYTHON_PATH" -ForegroundColor Red
+    pause
+    exit 1
+}
+
+if (-Not (Test-Path $ODOO_BIN)) {
+    Write-Host "Odoo binary not found at: $ODOO_BIN" -ForegroundColor Red
+    pause
+    exit 1
+}
+
+if (-Not (Test-Path $ODOO_CONF)) {
+    Write-Host "Odoo config not found at: $ODOO_CONF" -ForegroundColor Red
     pause
     exit 1
 }
